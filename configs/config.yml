@@ -1,0 +1,5 @@
+port: "8000"
+
+userdata: "users.json"
+
+api: "https://api.coinbase.com/v2/prices/spot?currency=UAH"
