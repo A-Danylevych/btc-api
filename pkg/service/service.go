@@ -5,6 +5,8 @@ import (
 	"github.com/A-Danylevych/btc-api/pkg/repository"
 )
 
+//go:generate mockgen -source=service.go -destination=mocks/mock.go
+
 type Authorization interface {
 	CreateUser(user btcapi.User) (int, error)
 	GenerateToken(user btcapi.User) (string, error)
