@@ -4,21 +4,12 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"strconv"
+
+	"github.com/A-Danylevych/btc-api/pkg/ratemicroservice/endpoints"
 )
 
 type RateService struct {
 	url string
-}
-
-type Response struct {
-	Data Data `json:"data"`
-}
-
-type Data struct {
-	Base     string `json:"base"`
-	Currency string `json:"currency"`
-	Amount   string `json:"amount"`
 }
 
 //Makes a request for a third-party API. And returns bitcoin to hryvnia rate or error
@@ -40,13 +31,13 @@ func (s *RateService) GetRate() (float64, error) {
 	if err != nil {
 		return 0, err
 	}
-	response := Response{}
+	response := endpoints.GetResponse{}
 	json.Unmarshal(body, &response)
 
 	if err != nil {
 		return 0, err
 	}
-	return strconv.ParseFloat(response.Data.Amount, 64)
+	return response.Rate, nil
 }
 
 func NewRateService(url string) *RateService {
