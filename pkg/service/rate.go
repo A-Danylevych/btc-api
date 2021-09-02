@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"net/http"
 
@@ -36,6 +37,10 @@ func (s *RateService) GetRate() (float64, error) {
 
 	if err != nil {
 		return 0, err
+	}
+
+	if response.Err != "" {
+		return response.Rate, errors.New(response.Err)
 	}
 	return response.Rate, nil
 }
