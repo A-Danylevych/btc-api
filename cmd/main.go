@@ -30,7 +30,7 @@ func main() {
 	}
 
 	repos := repository.NewRepository(filename)
-	services := service.NewService(repos, viper.GetString("api"))
+	services := service.NewService(repos, viper.GetString("microservice"))
 	handlers := handler.NewHandler(services)
 
 	srv := new(btcapi.Server)
