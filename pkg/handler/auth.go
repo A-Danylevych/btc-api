@@ -12,12 +12,12 @@ func (h *Handler) create(c *gin.Context) {
 	var input btcapi.User
 
 	if err := c.BindJSON(&input); err != nil {
-		newResponse(c, http.StatusBadRequest, "invalid input body")
+		newResponse(c, http.StatusBadRequest, "invalid input body", h.logger)
 		return
 	}
 	id, err := h.services.Authorization.CreateUser(input)
 	if err != nil {
-		newResponse(c, http.StatusInternalServerError, err.Error())
+		newResponse(c, http.StatusInternalServerError, err.Error(), h.logger)
 		return
 	}
 
@@ -31,13 +31,13 @@ func (h *Handler) logIn(c *gin.Context) {
 	var input btcapi.User
 
 	if err := c.BindJSON(&input); err != nil {
-		newResponse(c, http.StatusBadRequest, "invalid input body")
+		newResponse(c, http.StatusBadRequest, "invalid input body", h.logger)
 		return
 	}
 
 	token, err := h.services.Authorization.GenerateToken(input)
 	if err != nil {
-		newResponse(c, http.StatusInternalServerError, err.Error())
+		newResponse(c, http.StatusInternalServerError, err.Error(), h.logger)
 		return
 	}
 

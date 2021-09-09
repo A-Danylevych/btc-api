@@ -12,43 +12,48 @@ import (
 	"github.com/A-Danylevych/btc-api/pkg/service"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"github.com/vladoatanasov/logrus_amqp"
 )
 
 // Starting and finishing the API
 func main() {
-	logrus.SetFormatter(new(logrus.JSONFormatter))
+	log := logrus.New()
+	log.SetFormatter(new(logrus.JSONFormatter))
+
+	hook := logrus_amqp.NewAMQPHook("localhost:5672", "guest", "guest", "BTC-API", "")
+
+	log.Hooks.Add(hook)
 
 	if err := initConfig(); err != nil {
-		logrus.Fatalf("error initializing configs: %s", err.Error())
+		log.Fatalf("error initializing configs: %s", err.Error())
 	}
 
 	filename := viper.GetString("userdata")
 
-	err := checkFile(filename)
-	if err != nil {
-		logrus.Fatalf("error occured while opening json file: %s", err.Error())
+	if err := checkFile(filename); err != nil {
+		log.Fatalf("error occured while opening json file: %s", err.Error())
 	}
 
 	repos := repository.NewRepository(filename)
 	services := service.NewService(repos, viper.GetString("microservice"))
-	handlers := handler.NewHandler(services)
+	handlers := handler.NewHandler(services, log)
 
 	srv := new(btcapi.Server)
 	go func() {
 		if err := srv.Run(viper.GetString("port"), handlers.InitRouters()); err != nil {
-			logrus.Fatalf("error occured while running http server: %s", err.Error())
+			log.Fatalf("error occured while running http server: %s", err.Error())
 		}
 	}()
-	logrus.Print("BTC API Started")
+	log.Debug("BTC API Started")
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
 	<-quit
 
-	logrus.Print("BTC API Shutting Down")
+	log.Debug("BTC API Shutting Down")
 
 	if err := srv.Shutdown(context.Background()); err != nil {
-		logrus.Errorf("error occured on server shutting down: %s", err.Error())
+		log.Errorf("error occured on server shutting down: %s", err.Error())
 	}
 }
 

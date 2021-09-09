@@ -1,0 +1,4 @@
+The exchanger and queue were created manually. 
+The data is transmitted in Json format. 
+The consumer is located in cmd/consumer.
+Error level errors are issued for incorrect user actions.

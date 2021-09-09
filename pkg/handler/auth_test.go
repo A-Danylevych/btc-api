@@ -12,11 +12,13 @@ import (
 	mock_service "github.com/A-Danylevych/btc-api/pkg/service/mocks"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestHandlerCreate(t *testing.T) {
 	type mockBehavior func(s *mock_service.MockAuthorization, user btcapi.User)
+	log := logrus.New()
 
 	testTable := []struct {
 		name                 string
@@ -74,7 +76,7 @@ func TestHandlerCreate(t *testing.T) {
 			testCase.mockBehavior(auth, testCase.inputUser)
 
 			service := &service.Service{Authorization: auth}
-			handler := NewHandler(service)
+			handler := NewHandler(service, log)
 
 			r := gin.New()
 			r.POST("/create", handler.create)
@@ -93,6 +95,7 @@ func TestHandlerCreate(t *testing.T) {
 
 func TestHandlerLogIn(t *testing.T) {
 	type mockBehavior func(s *mock_service.MockAuthorization, user btcapi.User)
+	log := logrus.New()
 
 	testTable := []struct {
 		name                 string
@@ -150,7 +153,7 @@ func TestHandlerLogIn(t *testing.T) {
 			testCase.mockBehavior(auth, testCase.inputUser)
 
 			service := &service.Service{Authorization: auth}
-			handler := NewHandler(service)
+			handler := NewHandler(service, log)
 
 			r := gin.New()
 			r.POST("/login", handler.logIn)

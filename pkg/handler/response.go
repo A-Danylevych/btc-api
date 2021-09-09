@@ -10,8 +10,8 @@ type Response struct {
 }
 
 //Error handling
-func newResponse(c *gin.Context, statusCode int, message string) {
-	logrus.Error(message)
+func newResponse(c *gin.Context, statusCode int, message string, logger *logrus.Logger) {
+	logger.Error(message)
 	c.AbortWithStatusJSON(statusCode, Response{Message: message})
 
 }

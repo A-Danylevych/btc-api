@@ -12,6 +12,7 @@ import (
 	"github.com/A-Danylevych/btc-api/pkg/handler"
 	"github.com/A-Danylevych/btc-api/pkg/repository"
 	"github.com/A-Danylevych/btc-api/pkg/service"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -51,9 +52,10 @@ func (s *APITestSuite) TearDownSuite() {
 }
 
 func (s *APITestSuite) initDeps() {
+	log := logrus.New()
 	s.repos = repository.NewRepository(fileName)
 	s.services = service.NewService(s.repos, apiUrl)
-	s.handlers = handler.NewHandler(s.services)
+	s.handlers = handler.NewHandler(s.services, log)
 }
 
 func (s *APITestSuite) populateDB() error {

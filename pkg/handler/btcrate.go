@@ -10,12 +10,12 @@ import (
 func (h *Handler) getRate(c *gin.Context) {
 	id, err := getUserId(c)
 	if err != nil {
-		newResponse(c, http.StatusInternalServerError, err.Error())
+		newResponse(c, http.StatusInternalServerError, err.Error(), h.logger)
 		return
 	}
 	rate, err := h.services.GetRate()
 	if err != nil {
-		newResponse(c, http.StatusInternalServerError, err.Error())
+		newResponse(c, http.StatusInternalServerError, err.Error(), h.logger)
 		return
 	}
 	c.JSON(http.StatusOK, map[string]interface{}{

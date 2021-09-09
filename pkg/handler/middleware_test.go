@@ -11,11 +11,13 @@ import (
 	mock_service "github.com/A-Danylevych/btc-api/pkg/service/mocks"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestHandlerUserIdentty(t *testing.T) {
 	type mockBehavior func(s *mock_service.MockAuthorization, token string)
+	log := logrus.New()
 
 	testTable := []struct {
 		name                 string
@@ -77,7 +79,7 @@ func TestHandlerUserIdentty(t *testing.T) {
 			testCase.mockBehavior(auth, testCase.token)
 
 			service := &service.Service{Authorization: auth}
-			handler := NewHandler(service)
+			handler := NewHandler(service, log)
 
 			r := gin.New()
 			r.GET("/identity", handler.userIdentity, func(c *gin.Context) {
